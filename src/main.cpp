@@ -1,14 +1,17 @@
 
+#include "Application.hpp"
+
 #include <gtkmm.h>
 
+using namespace com::toxiclabs::drumroll;
 
 int main(int argc,char * argv[])
 {
-	Glib::RefPtr<Gtk::Aplication> app;
+	Gtk::Main kit(argc, argv);
 	
-	app = Gtk::Application::create(argc,argv,"com.toxiclabs.drumroll");
+	Application app;
 	
-	
+	Gtk::Main::run();
 	
 	return 0;
 }

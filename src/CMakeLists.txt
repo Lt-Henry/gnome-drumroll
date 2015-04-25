@@ -1,6 +1,6 @@
 
 #main 
-add_executable(gnome-drumroll main.cpp)
+add_executable(gnome-drumroll main.cpp gresources.c Application.cpp)
 
 #require pkg-config support
 find_package(PkgConfig REQUIRED)
