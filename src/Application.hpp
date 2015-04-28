@@ -16,9 +16,16 @@ namespace com
 				public:
 				
 				Glib::RefPtr<Gtk::Builder> glade;
+				Gtk::ApplicationWindow * winDrum;
+				Gtk::Image * imgDrum;
+				
+				Glib::RefPtr<Gdk::Pixbuf> schema;
+				Glib::RefPtr<Gdk::Pixbuf> schema_map;
 				
 				Application();
 				~Application();
+				
+				bool OnClose(GdkEventAny* event);
 			};
 		}
 	}
