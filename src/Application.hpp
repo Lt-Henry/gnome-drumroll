@@ -17,6 +17,7 @@ namespace com
 				public:
 				
 				static std::map<int,std::string> mididrum;
+				static std::map<unsigned int,unsigned int> colormap;
 				
 				Glib::RefPtr<Gtk::Builder> glade;
 				Gtk::ApplicationWindow * winDrum;
@@ -31,6 +32,11 @@ namespace com
 				~Application();
 				
 				bool OnClose(GdkEventAny* event);
+				
+				void OnComboChanged();
+				
+				bool OnComboEnter(GdkEventCrossing*event);
+				bool OnComboLeave(GdkEventCrossing*event);
 			};
 		}
 	}

@@ -59,6 +59,16 @@ map<int,string> Application::mididrum = {
 	{81,"Open Triangle"}
 };
 
+map<unsigned int,unsigned int> Application::colormap =
+{
+	{0,0x1abc9cff},
+	{1,0xf1c40fff},
+	{2,0x3498dbff},
+	{3,0xe74c3cff},
+	{4,0x9b59b6ff},
+	{5,0xbdc3c7ff},
+};
+
 
 Application::Application()
 {
@@ -108,13 +118,20 @@ sigc::mem_fun(*this,&Application::OnClose));
 		row.set_value(1,m.second);
 	}
 	
+	winDrum->show_all();
+	
 	for(int n=0;n<6;n++)
 	{
 		combos[n]->pack_start(m_col_name);
-		combos[n]->set_model(store);	
+		combos[n]->set_model(store);
+		combos[n]->signal_changed().connect(sigc::mem_fun(*this,&Application::OnComboChanged));
+
+		Gtk::Container * evbox = combos[n]->get_parent();
+		evbox->signal_enter_notify_event().connect(sigc::mem_fun(*this,&Application::OnComboEnter));
+		evbox->signal_leave_notify_event().connect(sigc::mem_fun(*this,&Application::OnComboLeave));
 	}
 	
-	winDrum->show_all();
+	
 }
 
 
@@ -127,4 +144,31 @@ bool Application::OnClose(GdkEventAny* event)
 	Gtk::Main::quit();
 	
 	return true;
+}
+
+void Application::OnComboChanged()
+{
+	cout<<"Combo changed"<<endl;
+}
+
+bool Application::OnComboEnter(GdkEventCrossing * event)
+{
+	
+	for(int n=0;n<6;n++)
+	{
+		Glib::RefPtr<Gdk::Window> window = combos[n]->get_window();
+		
+		if(window->gobj()==event->window)
+		{
+			cout<<"Found at "<<n<<endl;
+		}
+	}
+	return false;
+}
+
+bool Application::OnComboLeave(GdkEventCrossing * event)
+{
+	
+	
+	return false;
 }
