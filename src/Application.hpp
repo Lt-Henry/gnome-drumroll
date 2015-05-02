@@ -19,10 +19,13 @@ namespace com
 				static std::map<int,std::string> mididrum;
 				static std::map<unsigned int,unsigned int> colormap;
 				
+				int selected;
+				
 				Glib::RefPtr<Gtk::Builder> glade;
 				Gtk::ApplicationWindow * winDrum;
 				Gtk::Image * imgDrum;
 				
+				Glib::RefPtr<Gdk::Pixbuf> schema_pixbuf;
 				Glib::RefPtr<Gdk::Pixbuf> schema;
 				Glib::RefPtr<Gdk::Pixbuf> schema_map;
 				
@@ -30,6 +33,8 @@ namespace com
 				
 				Application();
 				~Application();
+				
+				void UpdateImage();
 				
 				bool OnClose(GdkEventAny* event);
 				

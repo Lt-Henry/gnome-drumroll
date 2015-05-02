@@ -73,6 +73,7 @@ map<unsigned int,unsigned int> Application::colormap =
 Application::Application()
 {
 
+	selected=0;
 
 
 	glade=Gtk::Builder::create_from_resource("/com/toxiclabs/drumroll/gnome-drumroll.ui");
@@ -88,8 +89,14 @@ sigc::mem_fun(*this,&Application::OnClose));
 	schema=Gdk::Pixbuf::create_from_resource(
 "/com/toxiclabs/drumroll/schema.svg",320,240);
 
+	schema_map=Gdk::Pixbuf::create_from_resource(
+"/com/toxiclabs/drumroll/schema-map.svg",320,240);
+
+	schema_pixbuf=schema->copy();
+
+
 	glade->get_widget("imgDrum",imgDrum);
-	imgDrum->set(schema);
+	imgDrum->set(schema_pixbuf);
 	
 	
 	glade->get_widget("combobox1",combos[0]);
@@ -139,6 +146,17 @@ Application::~Application()
 {
 }
 
+void Application::UpdateImage()
+{
+	for(int j=0;j<schema_pixbuf->get_height();j++)
+	{
+		for(int i=0;i<schema_pixbuf->get_width();i++)
+		{
+			
+		}
+	}
+}
+
 bool Application::OnClose(GdkEventAny* event)
 {
 	Gtk::Main::quit();
@@ -160,7 +178,7 @@ bool Application::OnComboEnter(GdkEventCrossing * event)
 		
 		if(window->gobj()==event->window)
 		{
-			cout<<"Found at "<<n<<endl;
+			selected=n;
 		}
 	}
 	return false;
@@ -168,7 +186,7 @@ bool Application::OnComboEnter(GdkEventCrossing * event)
 
 bool Application::OnComboLeave(GdkEventCrossing * event)
 {
-	
+	selected=0;
 	
 	return false;
 }
