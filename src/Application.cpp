@@ -61,19 +61,21 @@ map<int,string> Application::mididrum = {
 
 map<unsigned int,unsigned int> Application::colormap =
 {
-	{0,0x1abc9cff},
-	{1,0xf1c40fff},
-	{2,0x3498dbff},
-	{3,0xe74c3cff},
-	{4,0x9b59b6ff},
-	{5,0xbdc3c7ff},
+
+	{0,0xff9cbc1a},
+	{1,0xff0fc4f1},
+	{2,0xffdb9834},
+	{3,0xff3c4ce7},
+	{4,0xffb6599b},
+	{5,0xffc7c3bd},
+	
 };
 
 
 Application::Application()
 {
 
-	selected=0;
+	selected=-1;
 
 
 	glade=Gtk::Builder::create_from_resource("/com/toxiclabs/drumroll/gnome-drumroll.ui");
@@ -148,13 +150,47 @@ Application::~Application()
 
 void Application::UpdateImage()
 {
+
+	guint32 * buffer_schema;
+	guint32 * buffer_schema_map;
+	guint32 * buffer_schema_pixbuf;
+	
+	guint32 keycolor;
+	
+	buffer_schema = (guint32 *)schema->get_pixels();
+	buffer_schema_map = (guint32 *)schema_map->get_pixels();
+	buffer_schema_pixbuf = (guint32 *)schema_pixbuf->get_pixels();
+	
+	if(selected>=0)
+		keycolor=Application::colormap[selected];
+	else
+		keycolor=0xdeadbeef;
+	
+	cout<<"keycolor: "<<hex<<keycolor<<endl;
+	
 	for(int j=0;j<schema_pixbuf->get_height();j++)
 	{
 		for(int i=0;i<schema_pixbuf->get_width();i++)
 		{
+		
+			if(buffer_schema_map[i+j*schema_pixbuf->get_width()]==keycolor)
+			{
+				buffer_schema_pixbuf[i+j*schema_pixbuf->get_width()]=0xff9cbc1a;
+			}
+			else
+			{
+				buffer_schema_pixbuf[i+j*schema_pixbuf->get_width()]=buffer_schema[i+j*schema_pixbuf->get_width()];
+				
+			}
+			
+			
+			
+			
 			
 		}
 	}
+	
+	imgDrum->set(schema_pixbuf);
 }
 
 bool Application::OnClose(GdkEventAny* event)
@@ -181,12 +217,17 @@ bool Application::OnComboEnter(GdkEventCrossing * event)
 			selected=n;
 		}
 	}
+	
+	UpdateImage();
+	
 	return false;
 }
 
 bool Application::OnComboLeave(GdkEventCrossing * event)
 {
-	selected=0;
+	selected=-1;
+	
+	UpdateImage();
 	
 	return false;
 }
