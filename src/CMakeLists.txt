@@ -1,5 +1,6 @@
 
 #main 
+set_source_files_properties(gresources.c PROPERTIES GENERATED TRUE)
 add_executable(gnome-drumroll main.cpp gresources.c Application.cpp)
 
 #require pkg-config support

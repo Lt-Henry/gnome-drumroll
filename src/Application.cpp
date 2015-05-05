@@ -140,6 +140,13 @@ sigc::mem_fun(*this,&Application::OnClose));
 		evbox->signal_leave_notify_event().connect(sigc::mem_fun(*this,&Application::OnComboLeave));
 	}
 	
+	combos[0]->set_active(0);
+	combos[1]->set_active(1);
+	combos[2]->set_active(2);
+	combos[3]->set_active(3);
+	combos[4]->set_active(4);
+	combos[5]->set_active(5);
+	
 	
 }
 
@@ -166,7 +173,7 @@ void Application::UpdateImage()
 	else
 		keycolor=0xdeadbeef;
 	
-	cout<<"keycolor: "<<hex<<keycolor<<endl;
+	//cout<<"keycolor: "<<hex<<keycolor<<endl;
 	
 	for(int j=0;j<schema_pixbuf->get_height();j++)
 	{
@@ -202,7 +209,26 @@ bool Application::OnClose(GdkEventAny* event)
 
 void Application::OnComboChanged()
 {
-	cout<<"Combo changed"<<endl;
+	Gtk::TreeModel::iterator iter;
+
+	string name;
+	int value;
+
+	cout<<"**********************"<<endl;
+	for(int n=0;n<6;n++)
+	{
+		iter = combos[n]->get_active();
+		
+		if(iter)
+		{
+			Gtk::TreeModel::Row row = *iter;
+			row.get_value(1,name);
+			row.get_value(0,value);
+			
+			cout<<"["<<n<<"] "<<name<<" "<<value<<endl;
+		}
+	}
+	cout<<endl;
 }
 
 bool Application::OnComboEnter(GdkEventCrossing * event)
