@@ -31,6 +31,8 @@ namespace com
 				
 				Gtk::ComboBox * combos[6];
 				
+				Glib::Thread * t_core;
+				
 				Application();
 				~Application();
 				
@@ -42,6 +44,8 @@ namespace com
 				
 				bool OnComboEnter(GdkEventCrossing*event);
 				bool OnComboLeave(GdkEventCrossing*event);
+				
+				void Run();
 			};
 		}
 	}

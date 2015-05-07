@@ -6,6 +6,8 @@
 #include <vector>
 #include <string>
 
+#include <libusb-1.0/libusb.h>
+
 using namespace std;
 using namespace com::toxiclabs::drumroll;
 
@@ -198,6 +200,8 @@ void Application::UpdateImage()
 	}
 	
 	imgDrum->set(schema_pixbuf);
+	
+	t_core = Glib::Thread::create(sigc::mem_fun(*this, &Application::Run), true);
 }
 
 bool Application::OnClose(GdkEventAny* event)
@@ -256,4 +260,17 @@ bool Application::OnComboLeave(GdkEventCrossing * event)
 	UpdateImage();
 	
 	return false;
+}
+
+void Application::Run()
+{
+	libusb_context * ctx;
+	
+	libusb_init(&ctx);
+	
+	//libusb_get_device_list();
+	
+	
+	
+	libusb_exit(ctx);
 }
