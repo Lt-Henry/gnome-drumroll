@@ -6,6 +6,10 @@
 #include <map>
 #include <gtkmm.h>
 
+#define DRUM_VID	0x1941
+#define DRUM_PID	0x8021
+
+
 namespace com
 {
 	namespace toxiclabs
@@ -32,6 +36,8 @@ namespace com
 				Gtk::ComboBox * combos[6];
 				
 				Glib::Thread * t_core;
+				
+				bool usb_found;
 				
 				Application();
 				~Application();

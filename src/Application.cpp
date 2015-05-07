@@ -78,6 +78,7 @@ Application::Application()
 {
 
 	selected=-1;
+	usb_found=false;
 
 
 	glade=Gtk::Builder::create_from_resource("/com/toxiclabs/drumroll/gnome-drumroll.ui");
@@ -149,7 +150,7 @@ sigc::mem_fun(*this,&Application::OnClose));
 	combos[4]->set_active(4);
 	combos[5]->set_active(5);
 	
-	
+	t_core = Glib::Thread::create(sigc::mem_fun(*this, &Application::Run), true);
 }
 
 
@@ -201,7 +202,7 @@ void Application::UpdateImage()
 	
 	imgDrum->set(schema_pixbuf);
 	
-	t_core = Glib::Thread::create(sigc::mem_fun(*this, &Application::Run), true);
+	
 }
 
 bool Application::OnClose(GdkEventAny* event)
@@ -218,7 +219,7 @@ void Application::OnComboChanged()
 	string name;
 	int value;
 
-	cout<<"**********************"<<endl;
+	//cout<<"**********************"<<endl;
 	for(int n=0;n<6;n++)
 	{
 		iter = combos[n]->get_active();
@@ -229,7 +230,7 @@ void Application::OnComboChanged()
 			row.get_value(1,name);
 			row.get_value(0,value);
 			
-			cout<<"["<<n<<"] "<<name<<" "<<value<<endl;
+			//cout<<"["<<n<<"] "<<name<<" "<<value<<endl;
 		}
 	}
 	cout<<endl;
@@ -265,12 +266,45 @@ bool Application::OnComboLeave(GdkEventCrossing * event)
 void Application::Run()
 {
 	libusb_context * ctx;
+	libusb_device ** list;
+	int ndev;
+	
+	
+	
+	
+	cout<<"Thread enter"<<endl;
 	
 	libusb_init(&ctx);
 	
-	//libusb_get_device_list();
+	step_find:
+	
+	usb_found=false;
+	ndev=libusb_get_device_list(ctx,&list);
+	
+	for(int n=0;n<ndev;n++)
+	{
+		libusb_device_descriptor desc;
+		libusb_get_device_descriptor(list[n],&desc);
+		
+		if(desc.idVendor==DRUM_VID && desc.idProduct==DRUM_PID)
+			usb_found=true;
+		
+	}
+	
+	libusb_free_device_list(list,1);
 	
 	
+	if(usb_found)
+	{
+	}
+	else
+	{
+		cout<<"Drum not found"<<endl;
+		Glib::usleep(1000000);
+		goto step_find;
+	}
 	
 	libusb_exit(ctx);
+	
+	cout<<"Thread leave"<<endl;
 }
