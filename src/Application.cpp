@@ -73,6 +73,15 @@ map<unsigned int,unsigned int> Application::colormap =
 	
 };
 
+map<unsigned int,unsigned int> Application::id_drum =
+{
+	{1,0},
+	{2,2},
+	{4,1},
+	{8,5},
+	{16,4},
+	{32,3}
+};
 
 Application::Application()
 {
@@ -150,7 +159,12 @@ sigc::mem_fun(*this,&Application::OnClose));
 	combos[4]->set_active(4);
 	combos[5]->set_active(5);
 	
-	t_core = Glib::Thread::create(sigc::mem_fun(*this, &Application::Run), true);
+	for(int n=0;n<6;n++)
+	{
+		events[n]=chrono::system_clock::now();
+	}
+	
+	thread_usb = Glib::Thread::create(sigc::mem_fun(*this, &Application::Run), true);
 }
 
 
@@ -209,7 +223,7 @@ bool Application::OnClose(GdkEventAny* event)
 {
 
 	quit_request=true;
-	t_core->join();
+	thread_usb->join();
 	
 	Gtk::Main::quit();
 	
@@ -342,12 +356,32 @@ void Application::Run()
 		
 		if(res==0)
 		{
+			/*
 			cout<<"data:";
 			for(int n=0;n<length;n++)
 			{
-				cout<<" "<<hex<<(unsigned int)buffer[n];
+				cout<<" "<<dec<<(unsigned int)buffer[n];
 			}
 			cout<<endl;
+			*/
+			if(buffer[0]>0)
+			{
+				int id = Application::id_drum[buffer[0]];
+				
+				chrono::system_clock::time_point t;
+				t= chrono::system_clock::now();
+				
+				long int ms = chrono::duration_cast<chrono::milliseconds>(t-events[id]).count();
+				
+				if(ms>100)
+				{
+					cout<<"drum: "<<id<<" "<<ms<<"ms"<<endl;
+					events[id]=t;
+				}
+				else
+					cout<<"drum: "<<id<<" filtered ("<<ms<<"ms)"<<endl;
+			}
+		
 		}
 		else
 		{

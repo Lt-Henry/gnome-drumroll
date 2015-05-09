@@ -4,6 +4,7 @@
 #define _DR_APPLICATION_
 
 #include <map>
+#include <chrono>
 #include <gtkmm.h>
 
 #define DRUM_VID	0x1941
@@ -22,6 +23,9 @@ namespace com
 				
 				static std::map<int,std::string> mididrum;
 				static std::map<unsigned int,unsigned int> colormap;
+				static std::map<unsigned int,unsigned int> id_drum;
+				
+				std::chrono::system_clock::time_point events[6];
 				
 				int selected;
 				
@@ -35,7 +39,7 @@ namespace com
 				
 				Gtk::ComboBox * combos[6];
 				
-				Glib::Thread * t_core;
+				Glib::Thread * thread_usb;
 				
 				bool usb_found;
 				bool quit_request;
