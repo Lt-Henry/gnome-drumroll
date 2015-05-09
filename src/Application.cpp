@@ -79,7 +79,7 @@ Application::Application()
 
 	selected=-1;
 	usb_found=false;
-
+	quit_request=false;
 
 	glade=Gtk::Builder::create_from_resource("/com/toxiclabs/drumroll/gnome-drumroll.ui");
 
@@ -207,6 +207,10 @@ void Application::UpdateImage()
 
 bool Application::OnClose(GdkEventAny* event)
 {
+
+	quit_request=true;
+	t_core->join();
+	
 	Gtk::Main::quit();
 	
 	return true;
@@ -269,7 +273,8 @@ void Application::Run()
 	libusb_device ** list;
 	int ndev;
 	
-	
+	unsigned char buffer[8];
+	int res,length;
 	
 	
 	cout<<"Thread enter"<<endl;
@@ -294,15 +299,79 @@ void Application::Run()
 	libusb_free_device_list(list,1);
 	
 	
-	if(usb_found)
-	{
-	}
-	else
+	if(!usb_found)
 	{
 		cout<<"Drum not found"<<endl;
 		Glib::usleep(1000000);
 		goto step_find;
 	}
+	
+	
+	libusb_device_handle * handle=nullptr;
+	
+	handle = libusb_open_device_with_vid_pid(ctx,DRUM_VID,DRUM_PID);
+	
+	if(handle==nullptr)
+	{
+		cout<<"* failed to open device"<<endl;
+		goto step_exit;
+	}
+	
+	if(libusb_kernel_driver_active(handle, 0) == 1) 
+	{
+		cout<<"* kernel driver active"<<endl;
+		if(libusb_detach_kernel_driver(handle, 0) == 0) 
+			cout<<"* kernel driver detached!"<<endl;
+		else
+			cout<<"* kernel driver cannot be detached!"<<endl;
+			
+	}
+	
+	if(libusb_claim_interface(handle, 0))
+	{
+		cout<<"* cannot claim interface"<<endl;
+	}
+	else
+	{
+		cout<<"* claimed interface"<<endl;
+	}
+	
+	while(!quit_request)
+	{
+		res=libusb_bulk_transfer(handle,(1 | LIBUSB_ENDPOINT_IN),buffer,8,&length,500);
+		
+		if(res==0)
+		{
+			cout<<"data:";
+			for(int n=0;n<length;n++)
+			{
+				cout<<" "<<hex<<(unsigned int)buffer[n];
+			}
+			cout<<endl;
+		}
+		else
+		{
+			switch(res)
+			{
+				case LIBUSB_ERROR_TIMEOUT:
+				
+				break;
+				
+				case LIBUSB_ERROR_NO_DEVICE:
+					cout<<"* drum disconnected"<<endl;
+					quit_request=true;
+					/*
+					ToDo: Wait until device gets connected again
+					*/
+				break;
+				
+				default:
+				break;
+			}
+		}
+	}
+	
+	step_exit:
 	
 	libusb_exit(ctx);
 	

@@ -38,6 +38,7 @@ namespace com
 				Glib::Thread * t_core;
 				
 				bool usb_found;
+				bool quit_request;
 				
 				Application();
 				~Application();
