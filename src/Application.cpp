@@ -76,11 +76,11 @@ map<unsigned int,unsigned int> Application::colormap =
 map<unsigned int,unsigned int> Application::id_drum =
 {
 	{1,0},
-	{2,2},
-	{4,1},
+	{2,4},
+	{4,2},
 	{8,5},
-	{16,4},
-	{32,3}
+	{16,3},
+	{32,1}
 };
 
 Application::Application()
@@ -164,12 +164,15 @@ sigc::mem_fun(*this,&Application::OnClose));
 		events[n]=chrono::system_clock::now();
 	}
 	
+	midi = new Midi("gnome-drumroll","midi out");
+	
 	thread_usb = Glib::Thread::create(sigc::mem_fun(*this, &Application::Run), true);
 }
 
 
 Application::~Application()
 {
+	delete midi;
 }
 
 void Application::UpdateImage()
@@ -248,6 +251,8 @@ void Application::OnComboChanged()
 			row.get_value(1,name);
 			row.get_value(0,value);
 			
+			instruments[n]=value;
+			cout<<"Setting instrument "<<n<<"="<<value<<endl;
 			//cout<<"["<<n<<"] "<<name<<" "<<value<<endl;
 		}
 	}
@@ -366,6 +371,7 @@ void Application::Run()
 			*/
 			if(buffer[0]>0)
 			{
+				cout<<(int)buffer[0]<<endl;
 				int id = Application::id_drum[buffer[0]];
 				
 				chrono::system_clock::time_point t;
@@ -373,10 +379,12 @@ void Application::Run()
 				
 				long int ms = chrono::duration_cast<chrono::milliseconds>(t-events[id]).count();
 				
-				if(ms>100)
+				if(ms>DRUM_MIN_INTERVAL)
 				{
-					cout<<"drum: "<<id<<" "<<ms<<"ms"<<endl;
+					cout<<"drum: "<<id<<" instrument "<<instruments[id]<<" "<<ms<<"ms"<<endl;
 					events[id]=t;
+					
+					midi->NoteOn(instruments[id],127);
 				}
 				else
 					cout<<"drum: "<<id<<" filtered ("<<ms<<"ms)"<<endl;

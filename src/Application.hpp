@@ -7,8 +7,16 @@
 #include <chrono>
 #include <gtkmm.h>
 
+#include "Midi.hpp"
+
 #define DRUM_VID	0x1941
 #define DRUM_PID	0x8021
+
+/*!
+minimum interval between two notes in order to avoid some false contacts
+value in milliseconds
+*/
+#define DRUM_MIN_INTERVAL	80
 
 
 namespace com
@@ -26,6 +34,9 @@ namespace com
 				static std::map<unsigned int,unsigned int> id_drum;
 				
 				std::chrono::system_clock::time_point events[6];
+				int instruments[6];
+				
+				Midi * midi;
 				
 				int selected;
 				
