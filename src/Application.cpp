@@ -83,13 +83,15 @@ map<unsigned int,unsigned int> Application::id_drum =
 	{32,1}
 };
 
-Application::Application()
+Application::Application(int argc,char * argv[])
 {
 
 	selected=-1;
 	usb_found=false;
 	quit_request=false;
 
+	gApp=Gtk::Application::create(argc,argv,"com.toxiclabs.gnome-drumroll");
+	
 	glade=Gtk::Builder::create_from_resource("/com/toxiclabs/drumroll/gnome-drumroll.ui");
 
 	
@@ -166,7 +168,7 @@ sigc::mem_fun(*this,&Application::OnClose));
 	
 	midi = new Midi("gnome-drumroll","midi out");
 	
-	thread_usb = Glib::Thread::create(sigc::mem_fun(*this, &Application::Run), true);
+	thread_usb = Glib::Thread::create(sigc::mem_fun(*this, &Application::UsbThread), true);
 }
 
 
@@ -286,7 +288,7 @@ bool Application::OnComboLeave(GdkEventCrossing * event)
 	return false;
 }
 
-void Application::Run()
+void Application::UsbThread()
 {
 	libusb_context * ctx;
 	libusb_device ** list;
@@ -418,4 +420,10 @@ void Application::Run()
 	libusb_exit(ctx);
 	
 	cout<<"Thread leave"<<endl;
+}
+
+
+void Application::Run()
+{
+	gApp->run(*winDrum);
 }

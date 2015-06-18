@@ -16,7 +16,7 @@
 minimum interval between two notes in order to avoid some false contacts
 value in milliseconds
 */
-#define DRUM_MIN_INTERVAL	80
+#define DRUM_MIN_INTERVAL	15
 
 
 namespace com
@@ -40,6 +40,7 @@ namespace com
 				
 				int selected;
 				
+				Glib::RefPtr<Gtk::Application> gApp;
 				Glib::RefPtr<Gtk::Builder> glade;
 				Gtk::ApplicationWindow * winDrum;
 				Gtk::Image * imgDrum;
@@ -55,7 +56,7 @@ namespace com
 				bool usb_found;
 				bool quit_request;
 				
-				Application();
+				Application(int argc,char * argv []);
 				~Application();
 				
 				void UpdateImage();
@@ -66,6 +67,8 @@ namespace com
 				
 				bool OnComboEnter(GdkEventCrossing*event);
 				bool OnComboLeave(GdkEventCrossing*event);
+				
+				void UsbThread();
 				
 				void Run();
 			};

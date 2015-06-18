@@ -1,17 +1,14 @@
 
 #include "Application.hpp"
 
-#include <gtkmm.h>
 
 using namespace com::toxiclabs::drumroll;
 
 int main(int argc,char * argv[])
 {
-	Gtk::Main kit(argc, argv);
 	
-	Application app;
-	
-	Gtk::Main::run();
+	Application app(argc,argv);
+	app.Run();
 	
 	return 0;
 }
