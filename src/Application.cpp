@@ -204,7 +204,7 @@ void Application::UpdateImage()
 		
 			if(buffer_schema_map[i+j*schema_pixbuf->get_width()]==keycolor)
 			{
-				buffer_schema_pixbuf[i+j*schema_pixbuf->get_width()]=0xff9cbc1a;
+				buffer_schema_pixbuf[i+j*schema_pixbuf->get_width()]=0xff3effff;
 			}
 			else
 			{
@@ -230,7 +230,7 @@ bool Application::OnClose(GdkEventAny* event)
 	quit_request=true;
 	thread_usb->join();
 	
-	Gtk::Main::quit();
+	gApp->remove_window(*winDrum);
 	
 	return true;
 }
