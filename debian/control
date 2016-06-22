@@ -1,0 +1,15 @@
+Source: gnome-drumroll
+Section: x11
+Priority: optional
+Maintainer: Enrique M.G. <quiqueiii@gmail.com>
+Build-Depends: cdbs, debhelper (>= 7), pkg-config, libgtkmm-3-dev, cmake (>= 2.6.0)
+Standards-Version: 3.9.3
+
+ 
+Package: gnome-drumroll
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: usb drum roll midi software
+ This software allows to use the cheap usb drum roll as a midi device
+
+
