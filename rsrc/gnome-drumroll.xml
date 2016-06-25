@@ -3,6 +3,9 @@
 	<gresource prefix="/com/toxiclabs/drumroll">
 	<file>schema.svg</file>
 	<file>schema-map.svg</file>
+	<file>on.svg</file>
+	<file>off.svg</file>
+	<file>fail.svg</file>
 	<file>gnome-drumroll.ui</file>
 	</gresource>
 </gresources>
